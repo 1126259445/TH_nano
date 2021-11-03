@@ -38,8 +38,8 @@ void Task_Sensor(void *pvParameters)
             {
                 char Temperature[10] = {0};
                 char Humidity[10] = {0};
-                sprintf(Temperature,"T@ :%.1f",Get_Dht11_Temperature()/10.0f);
-                sprintf(Humidity,"H@ :%.1f",Get_Dht11_Humidity()/10.0f);
+                sprintf(Temperature,"T@ %.1f",Get_Dht11_Temperature()/10.0f);
+                sprintf(Humidity,"H@ %.1f",Get_Dht11_Humidity()/10.0f);
                 OLED_ShowString(0,0,Temperature,SIZE32);
                 OLED_ShowString(0,4,Humidity,SIZE32);
                 printf("%s,%s\r\n",Temperature,Humidity);
