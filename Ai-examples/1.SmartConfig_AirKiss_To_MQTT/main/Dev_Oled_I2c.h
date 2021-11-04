@@ -28,5 +28,10 @@ void  OLED_DrawBMP(uint8_t x0, uint8_t y0,uint8_t x1, uint8_t y1,uint8_t BMP[]);
 void  OLED_ShowIP(uint8_t x, uint8_t y, char*Array_IP);
 void  OLED_ShowString(uint8_t x, uint8_t y, char * Show_char,uint8_t fount_size);
 
+/***********************************Temperature High 32*32**************************************/
+extern const unsigned char BMP_Temperature_H[];
+extern const unsigned char BMP_Temperature_L[];
+extern const unsigned char BMP_Humidity_H[] ;
+extern const unsigned char BMP_Humidity_L[];
 #endif
 
