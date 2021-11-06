@@ -418,6 +418,30 @@ static uint8_t  OLED_Write_Data(uint8_t OLED_Byte) {
 }
 //----------------------------------------------------------------------------
 
+
+// 向OLED写入N字节数据/指令
+//---------------------------------------------------------------
+static void  OLED_Write_Multi_Data(uint8_t *OLED_Byte,uint8_t num)
+{
+	 int ret;
+	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+  	i2c_master_start(cmd);				// 发送起始信号
+
+	i2c_master_write_byte(cmd,0x78,1);			// 选择总线上的OLED[0111 100X B]
+	i2c_master_write_byte(cmd,0x40,1);			// [0x40]表示下一字节写入的是[数据]
+	for (uint8_t i = 0;i < num;i++)
+		i2c_master_write_byte(cmd,OLED_Byte[i],1);	// [具体数据]
+	i2c_master_stop(cmd);					// 发送停止信号
+    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+    i2c_cmd_link_delete(cmd);
+
+    if (ret != ESP_OK) {
+        return ret;
+    }
+	return true;						// 返回写入成功
+}
+//---------------------------------------------------------------
+
 // 向OLED写入一字节数据/指令
 //---------------------------------------------------------------
 static void  OLED_WR_Byte(uint8_t OLED_Byte, uint8_t OLED_Type)
@@ -458,14 +482,16 @@ static void  OLED_ShowChar(uint8_t x, uint8_t y, char Show_char,uint8_t fount_si
 		// 画第一页
 		//-------------------------------------------------------
 		OLED_Set_Pos(x,y);// 设置画点起始处
-		for(i=0;i<8;i++)// 循环8次(8列)
-		OLED_WR_Byte(F8X16[c*16+i],OLED_DATA);// 找到字模
+		OLED_Write_Multi_Data(&F8X16[c*16],8);
+		//for(i=0;i<8;i++)// 循环8次(8列)
+		//OLED_WR_Byte(F8X16[c*16+i],OLED_DATA);// 找到字模
 
 		// 画第二页
 		//-------------------------------------------------------
 		OLED_Set_Pos(x,y+1);// 页数加1
-		for(i=0;i<8;i++)// 循环8次
-		OLED_WR_Byte(F8X16[c*16+i+8],OLED_DATA);// 把第二页画完
+		OLED_Write_Multi_Data(&F8X16[c*16+8],8);
+		//for(i=0;i<8;i++)// 循环8次
+		//OLED_WR_Byte(F8X16[c*16+i+8],OLED_DATA);// 把第二页画完
 	}
 	else if(fount_size == SIZE32)
 	{
@@ -473,26 +499,30 @@ static void  OLED_ShowChar(uint8_t x, uint8_t y, char Show_char,uint8_t fount_si
 		// 画第一页
 		//-------------------------------------------------------
 		OLED_Set_Pos(x,y);// 设置画点起始处
-		for(i=0;i<16;i++)// 循环16次(16列)
-		OLED_WR_Byte(F16X32[c*64+i],OLED_DATA);// 找到字模
+		OLED_Write_Multi_Data(&F16X32[c*64],16);
+		//for(i=0;i<16;i++)// 循环16次(16列)
+		//OLED_WR_Byte(F16X32[c*64+i],OLED_DATA);// 找到字模
 
 		// 画第二页
 		//-------------------------------------------------------
 		OLED_Set_Pos(x,y+1);// 页数加1
-		for(i=0;i<16;i++)// 循环16次
-		OLED_WR_Byte(F16X32[c*64+i+16],OLED_DATA);// 把第2页画完
+		OLED_Write_Multi_Data(&F16X32[c*64+16],16);
+		//for(i=0;i<16;i++)// 循环16次
+		//OLED_WR_Byte(F16X32[c*64+i+16],OLED_DATA);// 把第2页画完
 
 		// 画第3页
 		//-------------------------------------------------------
 		OLED_Set_Pos(x,y+2);// 页数加1
-		for(i=0;i<16;i++)// 循环16次
-		OLED_WR_Byte(F16X32[c*64+i+32],OLED_DATA);// 把第3页画完
+		OLED_Write_Multi_Data(&F16X32[c*64+32],16);
+		//for(i=0;i<16;i++)// 循环16次
+		//OLED_WR_Byte(F16X32[c*64+i+32],OLED_DATA);// 把第3页画完
 
 		// 画第4页
 		//-------------------------------------------------------
 		OLED_Set_Pos(x,y+3);// 页数加1
-		for(i=0;i<16;i++)// 循环16次
-		OLED_WR_Byte(F16X32[c*64+i+48],OLED_DATA);// 把第4页画完
+		OLED_Write_Multi_Data(&F16X32[c*64+48],16);
+		//for(i=0;i<16;i++)// 循环16次
+		//OLED_WR_Byte(F16X32[c*64+i+48],OLED_DATA);// 把第4页画完
 	}
 }
 //-----------------------------------------------------------------------------
@@ -587,9 +617,10 @@ void  OLED_DrawBMP(uint8_t x0, uint8_t y0,uint8_t x1, uint8_t y1,uint8_t BMP[])
 	for(y=y0;y<y1;y++)
 	{
 		OLED_Set_Pos(x0,y);
-        for(x=x0;x<x1;x++)
+        //for(x=x0;x<x1;x++)
 	    {
-	    	OLED_WR_Byte(BMP[j++],OLED_DATA);
+			OLED_Write_Multi_Data(&BMP[y*(x1-x0)],x1-x0);
+	    	//OLED_WR_Byte(BMP[j++],OLED_DATA);
 	    }
 	}
 }
@@ -607,7 +638,9 @@ void  OLED_Clear(void)
 		OLED_WR_Byte(0x00,OLED_CMD);// 列低地址
 		OLED_WR_Byte(0x10,OLED_CMD);// 列高地址
 
-		for(N_row=0; N_row<128; N_row++)OLED_WR_Byte(0x00,OLED_DATA);
+		uint8_t clear_arr[128] = {0};
+		OLED_Write_Multi_Data(clear_arr,128);
+		//for(N_row=0; N_row<128; N_row++)OLED_WR_Byte(0x00,OLED_DATA);
 	}
 }
 //------------------------------------------------------------------------
