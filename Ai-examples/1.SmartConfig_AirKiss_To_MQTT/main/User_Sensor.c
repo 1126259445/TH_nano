@@ -7,11 +7,15 @@
 
 #include "esp_log.h"
 #include "esp_system.h"
+#include "string.h"
 
 #include "Dev_Dht11.h"
 #include "Dev_Oled_I2c.h"
 
+#include "User_HttpRequest_Time.h"
+
 TaskHandle_t Sensor_Handle = NULL;
+
 
 /**
  * @description: Sensor Read_data
@@ -35,25 +39,21 @@ void Task_Sensor(void *pvParameters)
             printf("read Dht11 \r\n");
             uint8_t ret = Read_Dht11_Data();
 
-            if(ret == 1)
-            {
-                char Temperature[10] = {0};
-                char Humidity[10] = {0};
-                float f_Temperature = Get_Dht11_Temperature()/10.0f;
-                float f_Humidity = Get_Dht11_Humidity()/10.0f;
-                sprintf(Temperature,"%.1fc",f_Temperature);
-                sprintf(Humidity,"%.1f%%",f_Humidity);
-
-                if(f_Temperature > 20) OLED_DrawBMP(0,0,32,4,BMP_Temperature_H);
-                else  OLED_DrawBMP(0,0,32,4,BMP_Temperature_L);
-                if(f_Humidity > 60)  OLED_DrawBMP(0,4,32,8,BMP_Humidity_H);
-                else  OLED_DrawBMP(0,4,32,8,BMP_Humidity_L);
-
-                OLED_ShowString(40,0,Temperature,SIZE32);
-                OLED_ShowString(40,4,Humidity,SIZE32);
-
-                printf("%s,%s\r\n",Temperature,Humidity);
-            }
+            char Temperature[10] = {0};
+            char Humidity[10] = {0};
+            float f_Temperature = Get_Dht11_Temperature()/10.0f;
+            float f_Humidity = Get_Dht11_Humidity()/10.0f;
+            sprintf(Temperature,"T:%.1fc",f_Temperature);
+            sprintf(Humidity,"H:%.1f%%",f_Humidity);
+            printf("%s,%s\r\n",Temperature,Humidity);
+/*
+            if(f_Temperature > 20) OLED_DrawBMP(0,0,32,4,BMP_Temperature_H);
+            else  OLED_DrawBMP(0,0,32,4,BMP_Temperature_L);
+            if(f_Humidity > 60)  OLED_DrawBMP(0,4,32,8,BMP_Humidity_H);
+            else  OLED_DrawBMP(0,4,32,8,BMP_Humidity_L);
+*/
+            OLED_ShowString(0,6,Temperature,SIZE16);
+            OLED_ShowString(72,6,Humidity,SIZE16);     
         }
 
         if(++Speed_Tick > 50)

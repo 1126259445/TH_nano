@@ -23,6 +23,8 @@
 #include "cJSON.h"
 #include "User_HttpRequest_Time.h"
 
+#include "Dev_Oled_I2c.h"
+
 /* Constants that aren't configurable in menuconfig */
 #define WEB_SERVER "quan.suning.com"
 #define WEB_PORT 80
@@ -140,6 +142,16 @@ static uint8_t Http_Data_process(char *recv_buf)
     return 0;
 }
 
+void Oled_Show_Time()
+{
+    static char calendar[11] = {0};
+    static char time[10] = {0}; 
+    memcpy(calendar,Http_Time.sysTime2,10);
+    memcpy(time,Http_Time.sysTime2+11,5);
+
+    OLED_ShowString(24,0,calendar,SIZE16);
+    OLED_ShowString(24,2,time,SIZE32);
+}
 
 void Task_HttpRequestTime(void *pvParameters)
 {
@@ -232,6 +244,9 @@ void Task_HttpRequestTime(void *pvParameters)
 
         ESP_LOGI(TAG, "\r\n... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);
         close(s);
+
+        Oled_Show_Time();
+
         vTaskDelay(10000 / portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "Http_Request Starting again!\r\n");
     }
