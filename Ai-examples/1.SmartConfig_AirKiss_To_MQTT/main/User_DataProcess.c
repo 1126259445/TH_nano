@@ -63,19 +63,19 @@ void mqtt_publish_data_interface(char *publish_topic, const char *pub_payload,ui
  */
 static int Json_Get_Battery()
 {
-	return 88;
+	return 100;
 }
 static int Json_Get_Longitude()
 {
-	return 1131234567;
+	return 0;
 }
 static int Json_Get_Latitude()
 {
-	return 221234567;
+	return 0;
 }
 static int Json_Get_Altitude()
 {
-	return 1100;
+	return 0;
 }
 static int Json_Get_Env_Temperature()
 {
@@ -87,15 +87,15 @@ static int Json_Get_Env_Humidity()
 }
 static int Json_Get_Env_Pressure()
 {
-	return 1010+(rand()%30);
+	return 0;
 }
 static int Json_Get_Wind_Speed()
 {
-	return 10+(rand()%30);
+	return 0;
 }
 static int Json_Get_Wind_Direction()
 {
-	return 100+(rand()%30);
+	return 0;
 }
 static uint32_t Json_Get_Switch()
 {
