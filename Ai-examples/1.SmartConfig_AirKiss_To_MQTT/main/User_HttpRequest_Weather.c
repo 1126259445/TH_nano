@@ -22,6 +22,7 @@
 #include <sys/socket.h>
 #include "cJSON.h"
 #include "User_HttpRequest_Weather.h"
+#include "Dev_Oled_I2c.h"
 
 /* Constants that aren't configurable in menuconfig */
 #define WEB_SERVER "api.seniverse.com"
@@ -55,6 +56,29 @@ char* Get_Http_Weather_T()
 }
 
 
+
+static void Oled_Show_Wrather()
+{
+    if((strstr(Http_Weather.weather,"Sunny")!=NULL) || (strstr(Http_Weather.weather,"Fair")!=NULL))
+        OLED_DrawBMP(8,0,40,4,Sunny);
+    else if(strstr(Http_Weather.weather,"Clear")!=NULL)
+        OLED_DrawBMP(8,0,40,4,Clear);
+    else if((strstr(Http_Weather.weather,"Cloudy")!=NULL) || (strstr(Http_Weather.weather,"Overcast")!=NULL))
+        OLED_DrawBMP(8,0,40,4,Cloudy);
+    else if((strstr(Http_Weather.weather,"Rain")!=NULL) || (strstr(Http_Weather.weather,"Storm")!=NULL))
+        OLED_DrawBMP(8,0,40,4,Rain);
+    else if(strstr(Http_Weather.weather,"Snow")!=NULL)
+        OLED_DrawBMP(8,0,40,4,Snow);
+    else if(strstr(Http_Weather.weather,"Shower")!=NULL)
+        OLED_DrawBMP(8,0,40,4,Shower);
+    else if((strstr(Http_Weather.weather,"Windy")!=NULL) || (strstr(Http_Weather.weather,"Blustery")!=NULL) || (strstr(Http_Weather.weather,"Hurricane")!=NULL))
+        OLED_DrawBMP(8,0,40,4,Windy);
+    else 
+        OLED_DrawBMP(8,0,40,4,Sunny);
+
+    OLED_ShowString(32,4,Http_Weather.temperature,SIZE16);
+}
+
 //Json_return data {"results":[{"location":{"id":"WS10730EM8EV","name":"深圳","country":"CN","path":"深圳,深圳,广东,中国","timezone":"Asia/Shanghai","timezone_offset":"+08:00"},"now":{"text":"多云","code":"4","temperature":"22"},"last_update":"2021-11-13T11:11:52+08:00"}]}
 static uint8_t Http_Data_process(char *recv_buf)
 {
@@ -79,6 +103,7 @@ static uint8_t Http_Data_process(char *recv_buf)
         memcpy(Http_Weather.temperature,temperature,strlen(temperature));
 
         printf("\r\nHTTP Weather >>>>>>>>>>>\r\n %s   %s  \r\n>>>>>>>>>>>>>>>>>>\r\n",Http_Weather.weather,Http_Weather.temperature);
+        Oled_Show_Wrather();
     }
     cJSON_Delete(root);
     return 0;
@@ -185,7 +210,7 @@ static void Task_HttpRequestWeather(void *pvParameters)
 void HTTP_Weather_Init()
 {
     int ret = pdFAIL;
-    ret = xTaskCreate(Task_HttpRequestWeather, "Task_HttpRequestWeather", 1024*20, NULL, 5, NULL);
+    ret = xTaskCreate(Task_HttpRequestWeather, "Task_HttpRequestWeather", 1024*10, NULL, 5, NULL);
     if (ret != pdPASS)
     {
         printf("create Task_HttpRequestTime thread failed.\n");

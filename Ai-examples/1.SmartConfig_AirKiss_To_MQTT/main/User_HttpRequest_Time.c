@@ -149,8 +149,8 @@ void Oled_Show_Time()
     memcpy(calendar,Http_Time.sysTime2,10);
     memcpy(time,Http_Time.sysTime2+11,5);
 
-    OLED_ShowString(24,0,calendar,SIZE16);
-    OLED_ShowString(24,2,time,SIZE32);
+    OLED_ShowString(48,0,calendar,SIZE16);
+    OLED_ShowString(48,2,time,SIZE32);
 }
 
 static void Task_HttpRequestTime(void *pvParameters)

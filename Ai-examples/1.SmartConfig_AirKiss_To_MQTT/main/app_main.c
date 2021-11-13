@@ -448,6 +448,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		}
 
 		HTTP_Time_Init();
+		HTTP_Weather_Init();
 		break;
 	}
 
