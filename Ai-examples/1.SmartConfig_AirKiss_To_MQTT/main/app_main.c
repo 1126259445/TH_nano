@@ -447,6 +447,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 			xTaskCreate(Task_ParseJSON, "Task_ParseJSON", 1024*10, NULL, 5, &mHandlerParseJSON);
 		}
 
+		HTTP_Time_Init();
 		break;
 	}
 
