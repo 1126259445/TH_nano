@@ -33,5 +33,13 @@ extern const unsigned char BMP_Temperature_H[];
 extern const unsigned char BMP_Temperature_L[];
 extern const unsigned char BMP_Humidity_H[] ;
 extern const unsigned char BMP_Humidity_L[];
+
+extern const unsigned char Sunny[];
+extern const unsigned char Clear[];
+extern const unsigned char Cloudy[];
+extern const unsigned char Rain[];
+extern const unsigned char Snow[];
+extern const unsigned char Shower[];
+extern const unsigned char Windy[];
 #endif
 
