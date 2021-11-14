@@ -43,7 +43,7 @@ void Task_Sensor(void *pvParameters)
             char Humidity[10] = {0};
             float f_Temperature = Get_Dht11_Temperature()/10.0f;
             float f_Humidity = Get_Dht11_Humidity()/10.0f;
-            sprintf(Temperature,"T:%.1fc",f_Temperature-5);
+            sprintf(Temperature,"T:%.1fc",f_Temperature);
             sprintf(Humidity,"H:%.1f%%",f_Humidity);
             printf("%s,%s\r\n",Temperature,Humidity);
 /*

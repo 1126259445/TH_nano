@@ -30,7 +30,8 @@ int Get_Dht11_Humidity()
 
 int Get_Dht11_Temperature()
 {
-    return (int)(Dht11.Temperature *10);
+    /*desktop cloce temperaure offset*/
+    return (int)((Dht11.Temperature-5) *10);
 }
 
 
