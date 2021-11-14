@@ -27,7 +27,7 @@ void  OLED_Clear(void);
 void  OLED_DrawBMP(uint8_t x0, uint8_t y0,uint8_t x1, uint8_t y1,uint8_t BMP[]);
 void  OLED_ShowIP(uint8_t x, uint8_t y, char*Array_IP);
 void  OLED_ShowString(uint8_t x, uint8_t y, char * Show_char,uint8_t fount_size);
-
+void  OLED_ShowChinese(uint8_t x, uint8_t y, char*chinese);
 /***********************************Temperature High 32*32**************************************/
 extern const unsigned char BMP_Temperature_H[];
 extern const unsigned char BMP_Temperature_L[];
@@ -41,5 +41,7 @@ extern const unsigned char Rain[];
 extern const unsigned char Snow[];
 extern const unsigned char Shower[];
 extern const unsigned char Windy[];
+
+extern const unsigned char chinese[][32];
 #endif
 

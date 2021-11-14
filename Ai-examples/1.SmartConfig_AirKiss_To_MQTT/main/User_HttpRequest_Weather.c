@@ -59,23 +59,96 @@ char* Get_Http_Weather_T()
 
 static void Oled_Show_Wrather()
 {
+    /*show BMP and chinese*/
     if((strstr(Http_Weather.weather,"Sunny")!=NULL) || (strstr(Http_Weather.weather,"Fair")!=NULL))
+    {
         OLED_DrawBMP(8,0,40,4,Sunny);
+        OLED_ShowChinese(0,4,chinese[0]);
+    }
     else if(strstr(Http_Weather.weather,"Clear")!=NULL)
+    {
         OLED_DrawBMP(8,0,40,4,Clear);
+        OLED_ShowChinese(0,4,chinese[0]);
+    }
     else if((strstr(Http_Weather.weather,"Cloudy")!=NULL) || (strstr(Http_Weather.weather,"Overcast")!=NULL))
+    {
         OLED_DrawBMP(8,0,40,4,Cloudy);
+        OLED_ShowChinese(0,4,chinese[6]);
+        OLED_ShowChinese(16,4,chinese[7]);
+    }
     else if((strstr(Http_Weather.weather,"Rain")!=NULL) || (strstr(Http_Weather.weather,"Storm")!=NULL))
-        OLED_DrawBMP(8,0,40,4,Rain);
+    {
+         OLED_DrawBMP(8,0,40,4,Rain);
+
+        if(strstr(Http_Weather.weather,"Light Rain")!=NULL)
+        {
+            OLED_ShowChinese(0,4,chinese[1]);
+            OLED_ShowChinese(16,4,chinese[5]);
+        }
+        else if(strstr(Http_Weather.weather,"Moderate Rain")!=NULL)
+        {
+            OLED_ShowChinese(0,4,chinese[2]);
+            OLED_ShowChinese(16,4,chinese[5]);
+        }
+        else if(strstr(Http_Weather.weather,"Heavy Rain")!=NULL)
+        {
+            OLED_ShowChinese(0,4,chinese[3]);
+            OLED_ShowChinese(16,4,chinese[5]);
+        }
+        else
+        {
+            OLED_ShowChinese(0,4,chinese[4]);
+            OLED_ShowChinese(16,4,chinese[5]);
+        }
+    }
     else if(strstr(Http_Weather.weather,"Snow")!=NULL)
+    {
         OLED_DrawBMP(8,0,40,4,Snow);
+        if(strstr(Http_Weather.weather,"Light Snow")!=NULL) 
+        {
+            OLED_ShowChinese(0,4,chinese[1]);
+            OLED_ShowChinese(16,4,chinese[10]);
+        }
+        else if(strstr(Http_Weather.weather,"Moderate Snow")!=NULL) 
+        {
+            OLED_ShowChinese(0,4,chinese[2]);
+            OLED_ShowChinese(16,4,chinese[10]);
+        }
+        else if(strstr(Http_Weather.weather,"Heavy Snow")!=NULL) 
+        {
+            OLED_ShowChinese(0,4,chinese[3]);
+            OLED_ShowChinese(16,4,chinese[10]);
+        }
+        else if(strstr(Http_Weather.weather,"Snowstorm")!=NULL) 
+        {
+            OLED_ShowChinese(0,4,chinese[4]);
+            OLED_ShowChinese(16,4,chinese[10]);
+        }
+    }
     else if(strstr(Http_Weather.weather,"Shower")!=NULL)
+    {
         OLED_DrawBMP(8,0,40,4,Shower);
+        if(strstr(Http_Weather.weather,"Thundershower")!=NULL) 
+        {
+            OLED_ShowChinese(0,4,chinese[8]);
+            OLED_ShowChinese(16,4,chinese[5]);
+        }
+        else
+        {
+            OLED_ShowChinese(0,4,chinese[12]);
+            OLED_ShowChinese(16,4,chinese[5]);
+        }
+    }
     else if((strstr(Http_Weather.weather,"Windy")!=NULL) || (strstr(Http_Weather.weather,"Blustery")!=NULL) || (strstr(Http_Weather.weather,"Hurricane")!=NULL))
-        OLED_DrawBMP(8,0,40,4,Windy);
+        {
+            OLED_DrawBMP(8,0,40,4,Windy);
+            OLED_ShowChinese(0,4,chinese[3]);
+            OLED_ShowChinese(16,4,chinese[9]);
+        }
     else 
         OLED_DrawBMP(8,0,40,4,Sunny);
 
+    /*show temperaure*/
     OLED_ShowString(32,4,Http_Weather.temperature,SIZE16);
 }
 
