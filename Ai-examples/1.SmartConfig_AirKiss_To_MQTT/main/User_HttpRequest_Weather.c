@@ -64,11 +64,13 @@ static void Oled_Show_Wrather()
     {
         OLED_DrawBMP(8,0,40,4,Sunny);
         OLED_ShowChinese(0,4,chinese[0]);
+        OLED_ShowString(16,4,"  ",SIZE16);
     }
     else if(strstr(Http_Weather.weather,"Clear")!=NULL)
     {
         OLED_DrawBMP(8,0,40,4,Clear);
         OLED_ShowChinese(0,4,chinese[0]);
+        OLED_ShowString(16,4,"  ",SIZE16);
     }
     else if((strstr(Http_Weather.weather,"Cloudy")!=NULL) || (strstr(Http_Weather.weather,"Overcast")!=NULL))
     {
