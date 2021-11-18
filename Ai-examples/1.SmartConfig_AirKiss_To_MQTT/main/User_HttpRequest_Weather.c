@@ -62,25 +62,25 @@ static void Oled_Show_Wrather()
     /*show BMP and chinese*/
     if((strstr(Http_Weather.weather,"Sunny")!=NULL) || (strstr(Http_Weather.weather,"Fair")!=NULL))
     {
-        OLED_DrawBMP(8,0,40,4,Sunny);
+        OLED_DrawBMP(0,0,32,4,Sunny);
         OLED_ShowChinese(0,4,chinese[0]);
         OLED_ShowString(16,4,"  ",SIZE16);
     }
     else if(strstr(Http_Weather.weather,"Clear")!=NULL)
     {
-        OLED_DrawBMP(8,0,40,4,Clear);
+        OLED_DrawBMP(0,0,32,4,Clear);
         OLED_ShowChinese(0,4,chinese[0]);
         OLED_ShowString(16,4,"  ",SIZE16);
     }
     else if((strstr(Http_Weather.weather,"Cloudy")!=NULL) || (strstr(Http_Weather.weather,"Overcast")!=NULL))
     {
-        OLED_DrawBMP(8,0,40,4,Cloudy);
+        OLED_DrawBMP(0,0,32,4,Cloudy);
         OLED_ShowChinese(0,4,chinese[6]);
         OLED_ShowChinese(16,4,chinese[7]);
     }
     else if((strstr(Http_Weather.weather,"Rain")!=NULL) || (strstr(Http_Weather.weather,"Storm")!=NULL))
     {
-         OLED_DrawBMP(8,0,40,4,Rain);
+         OLED_DrawBMP(0,0,32,4,Rain);
 
         if(strstr(Http_Weather.weather,"Light Rain")!=NULL)
         {
@@ -105,7 +105,7 @@ static void Oled_Show_Wrather()
     }
     else if(strstr(Http_Weather.weather,"Snow")!=NULL)
     {
-        OLED_DrawBMP(8,0,40,4,Snow);
+        OLED_DrawBMP(0,0,32,4,Snow);
         if(strstr(Http_Weather.weather,"Light Snow")!=NULL) 
         {
             OLED_ShowChinese(0,4,chinese[1]);
@@ -129,7 +129,7 @@ static void Oled_Show_Wrather()
     }
     else if(strstr(Http_Weather.weather,"Shower")!=NULL)
     {
-        OLED_DrawBMP(8,0,40,4,Shower);
+        OLED_DrawBMP(0,0,32,4,Shower);
         if(strstr(Http_Weather.weather,"Thundershower")!=NULL) 
         {
             OLED_ShowChinese(0,4,chinese[8]);
@@ -143,15 +143,18 @@ static void Oled_Show_Wrather()
     }
     else if((strstr(Http_Weather.weather,"Windy")!=NULL) || (strstr(Http_Weather.weather,"Blustery")!=NULL) || (strstr(Http_Weather.weather,"Hurricane")!=NULL))
         {
-            OLED_DrawBMP(8,0,40,4,Windy);
+            OLED_DrawBMP(0,0,32,4,Windy);
             OLED_ShowChinese(0,4,chinese[3]);
             OLED_ShowChinese(16,4,chinese[9]);
         }
     else 
-        OLED_DrawBMP(8,0,40,4,Sunny);
+        OLED_DrawBMP(0,0,32,4,Sunny);
 
     /*show temperaure*/
     OLED_ShowString(32,4,Http_Weather.temperature,SIZE16);
+
+    OLED_ShowString(32,0,"  ",SIZE16);OLED_ShowString(32,2,"  ",SIZE16);
+
 }
 
 //Json_return data {"results":[{"location":{"id":"WS10730EM8EV","name":"深圳","country":"CN","path":"深圳,深圳,广东,中国","timezone":"Asia/Shanghai","timezone_offset":"+08:00"},"now":{"text":"多云","code":"4","temperature":"22"},"last_update":"2021-11-13T11:11:52+08:00"}]}
