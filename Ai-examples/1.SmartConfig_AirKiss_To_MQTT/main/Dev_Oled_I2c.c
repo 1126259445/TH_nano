@@ -692,6 +692,24 @@ void  OLED_DrawBMP(uint8_t x0, uint8_t y0,uint8_t x1, uint8_t y1,uint8_t BMP[])
 }
 
 
+// X Y 屏写入某值
+//------------------------------------------------------------------------
+void  OLED_Clear_XY(uint8_t x0,uint8_t y0,uint8_t x1,uint8_t y1)
+{
+	uint8_t N_Page, N_row;
+
+	for(N_Page=y0; N_Page<y1; N_Page++)
+	{
+		OLED_WR_Byte(0xb0+N_Page,OLED_CMD);	// 从0～7页依次写入
+		OLED_WR_Byte(0x00,OLED_CMD);// 列低地址
+		OLED_WR_Byte(0x10,OLED_CMD);// 列高地址
+
+		uint8_t clear_arr[128] = {0};
+		OLED_Set_Pos(x0,y0);
+		OLED_Write_Multi_Data(clear_arr,(x1-x0));
+		//for(N_row=0; N_row<128; N_row++)OLED_WR_Byte(0x00,OLED_DATA);
+	}
+}
 // 整屏写入某值
 //------------------------------------------------------------------------
 void  OLED_Clear(void)

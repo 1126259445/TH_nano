@@ -243,10 +243,13 @@ esp_err_t MqttCloudsCallBack(esp_mqtt_event_handle_t event)
 		//ESP_LOGI(TAG, " xQueueReceive  data [%s] \n", event->data);
 		//发送数据到队列
 		struct __User_data *pTmper;
-		sprintf(user_data.allData, "%s", event->data);
-		pTmper = &user_data;
-		user_data.dataLen = event->data_len;
-		xQueueSend(ParseJSONQueueHandler, (void *)&pTmper, portMAX_DELAY);
+		if(sizeof(event->data) < sizeof(user_data.allData))
+		{
+			sprintf(user_data.allData, "%s", event->data);
+			pTmper = &user_data;
+			user_data.dataLen = event->data_len;
+			xQueueSend(ParseJSONQueueHandler, (void *)&pTmper, portMAX_DELAY);
+		}
 		break;
 	}
 	default:
@@ -444,9 +447,11 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		//开启json解析线程
 		if (mHandlerParseJSON == NULL)
 		{
-			xTaskCreate(Task_ParseJSON, "Task_ParseJSON", 1024*10, NULL, 5, &mHandlerParseJSON);
+			xTaskCreate(Task_ParseJSON, "Task_ParseJSON", 1024*4, NULL, 5, &mHandlerParseJSON);
 		}
 
+		OLED_Clear_XY(0,0,128,6);
+		ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP************");
 		HTTP_Time_Init();
 		HTTP_Weather_Init();
 		break;
@@ -456,6 +461,9 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		esp_wifi_connect();
 		xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
 		isConnect2Server = false;
+		OLED_Clear_XY(0,0,128,6);
+		OLED_ShowString(0,2,"WIFI connecting.",SIZE16);
+		ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED *WIFI connecting");
 		break;
 	default:
 		break;
@@ -645,14 +653,13 @@ void app_main(void)
 	ESP_LOGI(TAG, "deviceInfo: %s", deviceInfo);
 	ESP_LOGI(TAG, "MqttTopicSub: %s", MqttTopicSub);
 	ESP_LOGI(TAG, "MqttTopicPub: %s", MqttTopicPub);
-
-	//外设初始化
-	xTaskCreate(TaskButton, "TaskButton", 1024, NULL, 6, NULL);
-	xTaskCreate(Task_Sensor, "Task_Sensor", 1024, NULL, 6, NULL);
+	
 	OLED_I2C_Init();
 	//pwm_init_data();
 	//light_driver_set_rgb(0,0,0);
-
+	//外设初始化
+	xTaskCreate(TaskButton, "TaskButton", 1024, NULL, 6, NULL);
+	xTaskCreate(Task_Sensor, "Task_Sensor", 1024, NULL, 6, NULL);
 	tcpip_adapter_init();
 	wifi_event_group = xEventGroupCreate();
 	ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
