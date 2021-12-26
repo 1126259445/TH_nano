@@ -71,7 +71,7 @@ void TaskSmartConfigAirKiss2Net(void *parm);
 //} User_data;
 //User_data user_data;
 
-static const char *TAG = "AIThinkerDemo Log";
+static const char *TAG = "WS_TH_nano";
 static EventGroupHandle_t wifi_event_group;
 static const int CONNECTED_BIT = BIT0;
 static const int ESPTOUCH_DONE_BIT = BIT1;
@@ -93,7 +93,7 @@ int sock_fd;
 //按键定义
 #define BUTTON_GPIO 4
 //设备信息
-#define DEVICE_TYPE "aithinker"
+#define DEVICE_TYPE "WS_TH_nano"
 
 //mqtt
 esp_mqtt_client_handle_t client;
@@ -276,6 +276,7 @@ void TaskXMqttRecieve(void *p)
 		.keepalive = 120,					//心跳
 		.disable_auto_reconnect = false,	//开启自动重连
 		.disable_clean_session = false,		//开启 清除会话
+		.buffer_size = 1024*5,
 	};
 	client = esp_mqtt_client_init(&mqtt_cfg);
 	esp_mqtt_client_start(client);
