@@ -91,7 +91,7 @@ char MqttTopicSub[30], MqttTopicPub[30];
 int sock_fd;
 
 //按键定义
-#define BUTTON_GPIO 4
+#define BUTTON_GPIO 0
 //设备信息
 #define DEVICE_TYPE "WS_TH_nano"
 
