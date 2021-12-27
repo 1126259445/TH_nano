@@ -197,7 +197,7 @@ static void Task_HttpRequestWeather(void *pvParameters)
     struct addrinfo *res;
     struct in_addr *addr;
     int s, r;
-    char recv_buf[256];
+    char recv_buf[256] = {0};
 
     char all_buf[5120] = {0};
     uint16_t count = 0;
@@ -264,13 +264,19 @@ static void Task_HttpRequestWeather(void *pvParameters)
         do {
             bzero(recv_buf, sizeof(recv_buf));
             r = read(s, recv_buf, sizeof(recv_buf)-1);
-            for(int i = 0; i < r; i++) {
-                putchar(recv_buf[i]);
-            }
+          //  for(int i = 0; i < r; i++) {
+          //      putchar(recv_buf[i]);
+          //  }
 
-            memcpy((void*)&all_buf[count],(void*)recv_buf,r);
-            count += r;
-            if(count > sizeof(all_buf)) count = 0;
+            if((count+r) < sizeof(all_buf))
+            {
+                memcpy((void*)&all_buf[count],(void*)recv_buf,r);
+                count += r;
+            }   
+            else
+            {
+                break;
+            }
 
         } while(r > 0);
         
@@ -279,7 +285,7 @@ static void Task_HttpRequestWeather(void *pvParameters)
 
         ESP_LOGI(TAG, "\r\n... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);
         close(s);
-        vTaskDelay(15000 / portTICK_PERIOD_MS);
+        vTaskDelay(60000 / portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "Http_Request Starting again!\r\n");
     }
 }
