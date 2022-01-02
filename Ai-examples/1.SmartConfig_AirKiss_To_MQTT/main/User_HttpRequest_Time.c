@@ -246,8 +246,10 @@ static void Task_HttpRequestTime(void *pvParameters)
         } while(r > 0);
         
         char *data_pt = strstr((const char *) all_buf,(const char *)"sysTime2");
-        Http_Data_process(data_pt-2);
-
+        if(data_pt != NULL)
+        {
+            Http_Data_process(data_pt-2);
+        }
         ESP_LOGI(TAG, "\r\n... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);
         close(s);
 
