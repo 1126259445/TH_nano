@@ -242,14 +242,14 @@ esp_err_t MqttCloudsCallBack(esp_mqtt_event_handle_t event)
 	{
 		//ESP_LOGI(TAG, " xQueueReceive  data [%s] \n", event->data);
 		//发送数据到队列
-		struct __User_data *pTmper;
+/*		struct __User_data *pTmper;
 		if(sizeof(event->data) < sizeof(user_data.allData))
 		{
 			sprintf(user_data.allData, "%s", event->data);
 			pTmper = &user_data;
 			user_data.dataLen = event->data_len;
 			xQueueSend(ParseJSONQueueHandler, (void *)&pTmper, portMAX_DELAY);
-		}
+		}*/
 		break;
 	}
 	default:
@@ -441,7 +441,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		{
 			printf("create TaskXMqttRecieve thread failed.\n");
 		}
-
+/*
 		if (ParseJSONQueueHandler == NULL)
 			ParseJSONQueueHandler = xQueueCreate(5, sizeof(struct esp_mqtt_msg_type *));
 
@@ -450,7 +450,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		{
 			xTaskCreate(Task_ParseJSON, "Task_ParseJSON", 1024*4, NULL, 5, &mHandlerParseJSON);
 		}
-
+*/
 		OLED_Clear_XY(0,0,128,6);
 		ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP************");
 		HTTP_Time_Init();
