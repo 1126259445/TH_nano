@@ -3,7 +3,7 @@
 #include "app_main.h"
 
 #ifndef DEVECE_ID
-#define DEVECE_ID "DEV00003"
+#define DEVECE_ID "DEV00001"
 #endif
 
 typedef struct __User_data
