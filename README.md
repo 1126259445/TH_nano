@@ -1,6 +1,6 @@
 # 关于TH_nano开源软件
 本项目是一个桌面级的微信时钟可以图形形式显示当前天气状态以及时间和本地的温湿度情况，整体机身小巧精致，成本低廉，软硬件在此开源与大家分享
-![1f935351c048837e4bbcbb76912e91f5.png](en-resource://database/1320:1)
+![222](https://user-images.githubusercontent.com/63451966/166114332-369f18e3-8f99-441e-8acf-1c1610f73f7c.png)
 
 ## 硬件准备
 硬件材料 ： ESP8266-12F; 0.96寸OLED屏（I2C总线）；DHT11温湿度传感器；按键一个
@@ -12,7 +12,7 @@
 | GPIO14     | I2C_SCL | oled屏时钟线    |
 | GPIO2      | I2C_SDA  | oled屏数据线    |
 
-![2a06c91340dab93505da074e4de11b9e.png](en-resource://database/1322:0)
+![444](https://user-images.githubusercontent.com/63451966/166114370-e0205312-bff2-491d-857f-667aad72d7e2.png)
 ## 软件方案
 TH_nano 具备本地的 **温湿度采集，时间显示，当前天气** 情况获取，所有数据实时显示在OLED屏上，时间和天气情况有网络通过HTTP请求获取；温湿度由DHT11 1s采集一次
 1. 天气情况向知心天气获取 [天气示例](http://api.seniverse.com/v3/weather/now.json?key=SJG1TE67YcBqU7D9X&location=shenzhen&language=en&unit=c) 具体可到知心天气官网查看更多使用方法[之心天气官网](http://www.seniverse.com/login)
