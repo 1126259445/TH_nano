@@ -1,7 +1,30 @@
-<p align="center">
-  <img src="docs/_static/header.png" width="700px" height="300px" alt="Banner" />
-</p>
- 
+# 关于TH_nano开源软件
+本项目是一个桌面级的微信时钟可以图形形式显示当前天气状态以及时间和本地的温湿度情况，整体机身小巧精致，成本低廉，软硬件在此开源与大家分享
+![1f935351c048837e4bbcbb76912e91f5.png](en-resource://database/1320:1)
+
+## 硬件准备
+硬件材料 ： ESP8266-12F; 0.96寸OLED屏（I2C总线）；DHT11温湿度传感器；按键一个
+连接如下：
+| ESP8266_IO | 功能       |             |
+|------------|----------|-------------|
+| GPIO0      | 按键检测     | 和boot下载按键复用 |
+| GPIO5      | DHT11    | 单总线温湿度传感器  |
+| GPIO14     | I2C_SCL | oled屏时钟线    |
+| GPIO2      | I2C_SDA  | oled屏数据线    |
+
+![2a06c91340dab93505da074e4de11b9e.png](en-resource://database/1322:0)
+## 软件方案
+TH_nano 具备本地的 **温湿度采集，时间显示，当前天气** 情况获取，所有数据实时显示在OLED屏上，时间和天气情况有网络通过HTTP请求获取；温湿度由DHT11 1s采集一次
+1. 天气情况向知心天气获取 [天气示例](http://api.seniverse.com/v3/weather/now.json?key=SJG1TE67YcBqU7D9X&location=shenzhen&language=en&unit=c) 具体可到知心天气官网查看更多使用方法[之心天气官网](http://www.seniverse.com/login)
+2. 时间向网络请求 [时间示例](http://quan.suning.com/getSysTime.do)
+3. 按键接在了GPIO0上和BOOT功能复用，下载程序时需要按住按键再下载程序，本硬件方案以搭载一键下载电路，可直接运行下载命令一键下载。运行时通过长按直到指示灯快闪时可进入smartconfig智能配网，通过安信可官房小程序即可完成配网（当然也可以通过网页来配网后边会介绍）
+
+## 开发环境
+基础工程仓库地址： https://gitee.com/xuhongv/AiThinkerProjectForESP.git
+
+使用UBUNTU1804虚拟机搭建开发环境具体可参考安信可官方文档
+[LINUX下SDK开发环境搭建](http://aiclouds3.0-docs.aithinker.com/#/2.device/configuration_linux)
+本方案基于ESP8266的RTOS SDK3.0版本开发而来,在xClouds开源架构下进行二次开发，下边时关于xClouds 开源架构的介绍
 
 -------------------------------------
 
