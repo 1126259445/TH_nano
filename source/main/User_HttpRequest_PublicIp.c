@@ -15,108 +15,38 @@
 #include "esp_log.h"
 #include "esp_netif.h"
 #include "esp_event.h"
-#include "nvs.h"
-#include "nvs_flash.h"
 
 #include <netdb.h>
 #include <sys/socket.h>
 #include "cJSON.h"
-#include "User_HttpRequest_Time.h"
-
-#include "Dev_Oled_I2c.h"
+#include "User_HttpRequest_PublicIp.h"
 
 /* Constants that aren't configurable in menuconfig */
-#define WEB_SERVER "quan.suning.com"
+#define WEB_SERVER "restapi.amap.com"
 #define WEB_PORT 80
-#define WEB_URL "http://quan.suning.com/getSysTime.do"
+#define WEB_URL "https://restapi.amap.com/v3/ip?ip=%s&output=JSON&key=d07cd5a8d9cdcc19334ad8c8e9c4a73f"
 
-static const char *TAG = "Time";
+static const char *TAG = "PublicIp";
+TaskHandle_t PosTask_Handler = NULL;			//task1任务句柄
 
-static const char *REQUEST = "GET " WEB_URL " HTTP/1.0\r\n"
-    "Host: "WEB_SERVER"\r\n"
+static const char *REQUEST = "POST " WEB_URL " HTTP/1.0\r\n"
+     "Host: "WEB_SERVER"\r\n"
     "User-Agent: esp-idf/1.0 esp32\r\n"
     "\r\n";
 
 
-/*Time struct*/
-HttpRequest_Time Http_Time;
-Http_int_Time_t Http_int_Time;
+HttpRequest_Pos Http_Pos;
 
-/**************HTTP time interface***********************/
-HttpRequest_Time Get_Http_Time()
+static char PublicIp[20] = {0};
+/**************HTTP Weather interface***********************/
+char* Get_Http_PublicIp()
 {
-    return Http_Time;
+    return PublicIp;
 }
-
-char* Get_Http_Time1()
-{
-    return Http_Time.sysTime1;
-}
-
-char* Get_Http_Time2()
-{
-    return Http_Time.sysTime2;
-}
-
-Http_int_Time_t Get_Http_Int_Time()
-{
-    return Http_int_Time;
-}
-uint32_t Get_Http_Int_Years()
-{
-    return  Http_int_Time.years;  
-}
-uint8_t Get_Http_Int_Mounth()
-{
-    return Http_int_Time.month;
-}
-uint8_t Get_Http_Int_Day()
-{
-    return Http_int_Time.day;
-}
-uint8_t Get_Http_Int_Hours()
-{
-    return Http_int_Time.hours;
-}
-uint8_t Get_Http_Int_Minuter()
-{
-    return Http_int_Time.minute;
-}
-uint8_t Get_Http_Int_Second()
-{
-    return Http_int_Time.second;
-}
-/*******************************************************/
 
 
 
-void calculation(char *str_time)
-{
-    char str_years[5] ={0};
-    char str_month[3] ={0};
-    char str_day[3] ={0};
-    char str_hours[3] ={0};
-    char str_minute[3] ={0};
-    char str_second[3] ={0};
-
-    memcpy(str_years,str_time,4);
-    memcpy(str_month,str_time+4,2);
-    memcpy(str_day,str_time+6,2);
-    memcpy(str_hours,str_time+8,2);
-    memcpy(str_minute,str_time+10,2);
-    memcpy(str_second,str_time+12,2);
-
-    Http_int_Time.years = atoi(str_years);
-    Http_int_Time.month = atoi(str_month);
-    Http_int_Time.day = atoi(str_day);
-    Http_int_Time.hours = atoi(str_hours);
-    Http_int_Time.minute = atoi(str_minute);
-    Http_int_Time.second = atoi(str_second);
-
-    printf("Http_int_Time = %d %d %d %d:%d:%d\r\n",Http_int_Time.years,Http_int_Time.month,Http_int_Time.day,Http_int_Time.hours,Http_int_Time.minute,Http_int_Time.second);
-}
-
-//Json_return data {"sysTime2":"2021-11-07 13:06:03","sysTime1":"20211107130603"}
+//Json_return data {"results":[{"location":{"id":"WS10730EM8EV","name":"深圳","country":"CN","path":"深圳,深圳,广东,中国","timezone":"Asia/Shanghai","timezone_offset":"+08:00"},"now":{"text":"多云","code":"4","temperature":"22"},"last_update":"2021-11-13T11:11:52+08:00"}]}
 static uint8_t Http_Data_process(char *recv_buf)
 {
      cJSON *root;
@@ -130,31 +60,26 @@ static uint8_t Http_Data_process(char *recv_buf)
 		return 0;
 	}
     else{
-        /* 获取消息ID确认消息类型 */
-        char *Net_Time2 = cJSON_GetObjectItem(root, "sysTime2")->valuestring;
-        char *Net_Time1 = cJSON_GetObjectItem(root, "sysTime1")->valuestring;
-        memcpy(Http_Time.sysTime2,Net_Time2,strlen(Net_Time2));
-        memcpy(Http_Time.sysTime1,Net_Time1,strlen(Net_Time1));
-        calculation(Http_Time.sysTime1);
-        printf("\r\nHTTP Time >>>>>>>>>>>\r\n %s   %s  \r\n>>>>>>>>>>>>>>>>>>\r\n",Http_Time.sysTime2,Http_Time.sysTime1);
+        char *province = cJSON_GetObjectItem(root, "province")->valuestring;
+        char *city = cJSON_GetObjectItem(root,"city")->valuestring;
+        char *adcode = cJSON_GetObjectItem(root,"adcode")->valuestring;
+        char *rectangle = cJSON_GetObjectItem(root,"rectangle")->valuestring;
+
+        memcpy(Http_Pos.province,province,strlen(province));
+        memcpy(Http_Pos.city,city,strlen(city));
+        memcpy(Http_Pos.adcode,adcode,strlen(adcode));
+        memcpy(Http_Pos.rectangle,rectangle,strlen(rectangle));
+        printf("HTTP POS>>>>>>>>>>>>>>>>>>>>>\r\n");
+        printf("%s %s %s %s",Http_Pos.province,Http_Pos.city,Http_Pos.adcode,Http_Pos.rectangle);
+        printf("\r\n>>>>>>>>>>>>>>>>>>>>>>>>>\r\n");
         return 1;
     }
     cJSON_Delete(root);
     return 0;
 }
 
-void Oled_Show_Time()
-{
-    static char calendar[11] = {0};
-    static char time[10] = {0}; 
-    memcpy(calendar,Http_Time.sysTime2,10);
-    memcpy(time,Http_Time.sysTime2+11,5);
 
-    OLED_ShowString(48,0,calendar,SIZE16);
-    OLED_ShowString(48,2,time,SIZE32);
-}
-
-static void Task_HttpRequestTime(void *pvParameters)
+static void Task_HttpRequestPublicIp(void *pvParameters)
 {
     const struct addrinfo hints = {
         .ai_family = AF_INET,
@@ -163,9 +88,8 @@ static void Task_HttpRequestTime(void *pvParameters)
     struct addrinfo *res;
     struct in_addr *addr;
     int s, r;
-    char recv_buf[256] = {0};
-
-    char all_buf[5120] = {0};
+    char recv_buf[64] = {0};
+    char all_buf[1024] = {0};
     uint16_t count = 0;
 
     while(1)
@@ -227,12 +151,11 @@ static void Task_HttpRequestTime(void *pvParameters)
 
         /* Read HTTP response */
         count = 0;
+        bzero(all_buf, sizeof(all_buf));
         do {
             bzero(recv_buf, sizeof(recv_buf));
             r = read(s, recv_buf, sizeof(recv_buf)-1);
-         //   for(int i = 0; i < r; i++) {
-         //       putchar(recv_buf[i]);
-         //   }
+
             if((count+r) < sizeof(all_buf))
             {
                 memcpy((void*)&all_buf[count],(void*)recv_buf,r);
@@ -242,36 +165,33 @@ static void Task_HttpRequestTime(void *pvParameters)
             {
                 break;
             }
-                 
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-        } while(r > 0);
+
+       } while(r > 0);
         
         char *data_ok = strstr((const char *) all_buf,(const char *)"200 OK");
-        char *data_pt = strstr((const char *) all_buf,(const char *)"sysTime2");
+        char *data_pt = strstr((const char *) all_buf,(const char *)"status");
         if(data_ok != NULL && data_pt != NULL)
         {
-            if(Http_Data_process(data_pt-2))
+            ESP_LOGI(TAG, "HTTP/1.1 200 OK");
+            if(Http_Data_process(data_pt-2) == 1)
             {
-                vTaskDelay(10000 / portTICK_PERIOD_MS);
+                vTaskDelete(PosTask_Handler);
             }
         }
         ESP_LOGI(TAG, "\r\n... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);
         close(s);
-
-        Oled_Show_Time();
-
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        ESP_LOGI(TAG, "Http_Request Starting again!\r\n");
+        
     }
 }
 
-void HTTP_Time_Init()
+
+void HTTP_PublicIp_Init()
 {
     int ret = pdFAIL;
-//Task_HttpRequestTime 
-    ret = xTaskCreate(Task_HttpRequestTime, "Task_HttpRequestTime", 1024*10, NULL, 5, NULL);
+    ret = xTaskCreate(Task_HttpRequestPublicIp, "Task_HttpRequestPublicIp", 1024*2, NULL, 5, &PosTask_Handler);
     if (ret != pdPASS)
     {
-        printf("create Task_HttpRequestTime thread failed.\n");
+        printf("create Task_HttpRequestPublicIp thread failed.\n");
     }
 }

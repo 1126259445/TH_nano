@@ -41,6 +41,7 @@
 #include <lwip/netdb.h>
 #include "xpwm.h"
 
+#include "User_HttpRequest_PublicIp.h"
 #include "User_HttpRequest_Weather.h"
 #include "User_HttpRequest_Time.h"
 #include "User_DataProcess.h"
@@ -455,6 +456,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP************");
 		HTTP_Time_Init();
 		HTTP_Weather_Init();
+		HTTP_PublicIp_Init();
 		break;
 	}
 

@@ -23,6 +23,7 @@
 #include "cJSON.h"
 #include "User_HttpRequest_Weather.h"
 #include "Dev_Oled_I2c.h"
+#include "User_HttpRequest_PublicIp.h"
 
 /* Constants that aren't configurable in menuconfig */
 #define WEB_SERVER "api.seniverse.com"
@@ -182,11 +183,19 @@ static uint8_t Http_Data_process(char *recv_buf)
 
         printf("\r\nHTTP Weather >>>>>>>>>>>\r\n %s   %s  \r\n>>>>>>>>>>>>>>>>>>\r\n",Http_Weather.weather,Http_Weather.temperature);
         Oled_Show_Wrather();
+        return 1;
     }
     cJSON_Delete(root);
     return 0;
 }
 
+void New_RequestUrl(char *buf)
+{
+    sprintf(buf,"GET https://api.seniverse.com/v3/weather/now.json?key=SJG1TE67YcBqU7D9X&location=%s&language=en&unit=c HTTP/1.0\r\n" \
+    "Host: api.seniverse.com\r\n" \
+    "User-Agent: esp-idf/1.0 esp32\r\n" \
+    "\r\n",Http_Pos.city);
+}
 
 static void Task_HttpRequestWeather(void *pvParameters)
 {
@@ -204,6 +213,12 @@ static void Task_HttpRequestWeather(void *pvParameters)
 
     while(1)
     {
+        while(Http_Pos.city == NULL) 
+        {
+            vTaskDelay(1000);
+            ESP_LOGE(TAG, "Waiting POS");
+        }
+
         int err = getaddrinfo(WEB_SERVER, "80", &hints, &res);
 
         if(err != 0 || res == NULL) {
@@ -238,8 +253,10 @@ static void Task_HttpRequestWeather(void *pvParameters)
         ESP_LOGI(TAG, "... connected");
         freeaddrinfo(res);
  
-
-        while (write(s, REQUEST, strlen(REQUEST)) < 0) {
+        char request_url[512] = {0};
+        ESP_LOGI(TAG, request_url);
+        New_RequestUrl(request_url);
+        while (write(s, request_url, strlen(request_url)) < 0) {
             ESP_LOGE(TAG, "... socket send failed");
             close(s);
             vTaskDelay(2000 / portTICK_PERIOD_MS);
@@ -280,14 +297,18 @@ static void Task_HttpRequestWeather(void *pvParameters)
 
         } while(r > 0);
         
+        char *data_ok = strstr((const char *) all_buf,(const char *)"200 OK");
         char *data_pt = strstr((const char *) all_buf,(const char *)"results");
-        if(data_pt != NULL)
+        if(data_ok != NULL && data_pt != NULL)
         {
-            Http_Data_process(data_pt-2);
+            if(Http_Data_process(data_pt-2))
+            {
+                 vTaskDelay(600000 / portTICK_PERIOD_MS);
+            }
         }
         ESP_LOGI(TAG, "\r\n... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);
         close(s);
-        vTaskDelay(60000 / portTICK_PERIOD_MS);
+         vTaskDelay(1000 / portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "Http_Request Starting again!\r\n");
     }
 }
