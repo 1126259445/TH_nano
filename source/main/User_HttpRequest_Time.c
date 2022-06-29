@@ -90,7 +90,7 @@ uint8_t Get_Http_Int_Second()
 
 
 
-void calculation(char *str_time)
+static void calculation(char *str_time)
 {
     char str_years[5] ={0};
     char str_month[3] ={0};
@@ -116,6 +116,17 @@ void calculation(char *str_time)
     printf("Http_int_Time = %d %d %d %d:%d:%d\r\n",Http_int_Time.years,Http_int_Time.month,Http_int_Time.day,Http_int_Time.hours,Http_int_Time.minute,Http_int_Time.second);
 }
 
+static void Oled_Show_Time(void)
+{
+    static char calendar[11] = {0};
+    static char time[10] = {0}; 
+    memcpy(calendar,Http_Time.sysTime2,10);
+    memcpy(time,Http_Time.sysTime2+11,5);
+
+    OLED_ShowString(48,0,calendar,SIZE16);
+    OLED_ShowString(48,2,time,SIZE32);
+}
+
 //Json_return data {"sysTime2":"2021-11-07 13:06:03","sysTime1":"20211107130603"}
 static uint8_t Http_Data_process(char *recv_buf)
 {
@@ -137,22 +148,14 @@ static uint8_t Http_Data_process(char *recv_buf)
         memcpy(Http_Time.sysTime1,Net_Time1,strlen(Net_Time1));
         calculation(Http_Time.sysTime1);
         printf("\r\nHTTP Time >>>>>>>>>>>\r\n %s   %s  \r\n>>>>>>>>>>>>>>>>>>\r\n",Http_Time.sysTime2,Http_Time.sysTime1);
+        Oled_Show_Time();
         return 1;
     }
     cJSON_Delete(root);
     return 0;
 }
 
-void Oled_Show_Time()
-{
-    static char calendar[11] = {0};
-    static char time[10] = {0}; 
-    memcpy(calendar,Http_Time.sysTime2,10);
-    memcpy(time,Http_Time.sysTime2+11,5);
 
-    OLED_ShowString(48,0,calendar,SIZE16);
-    OLED_ShowString(48,2,time,SIZE32);
-}
 
 static void Task_HttpRequestTime(void *pvParameters)
 {
@@ -257,18 +260,16 @@ static void Task_HttpRequestTime(void *pvParameters)
         }
         ESP_LOGI(TAG, "\r\n... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);
         close(s);
-
-        Oled_Show_Time();
-
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "Http_Request Starting again!\r\n");
     }
 }
 
+//Task_HttpRequestTime 
 void HTTP_Time_Init()
 {
     int ret = pdFAIL;
-//Task_HttpRequestTime 
+    
     ret = xTaskCreate(Task_HttpRequestTime, "Task_HttpRequestTime", 1024*10, NULL, 5, NULL);
     if (ret != pdPASS)
     {

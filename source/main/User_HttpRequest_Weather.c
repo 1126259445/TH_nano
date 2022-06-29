@@ -57,7 +57,7 @@ char* Get_Http_Weather_T()
 }
 
 
-
+/**********************************************************/
 static void Oled_Show_Wrather()
 {
     /*show BMP and chinese*/
@@ -189,7 +189,7 @@ static uint8_t Http_Data_process(char *recv_buf)
     return 0;
 }
 
-void New_RequestUrl(char *buf)
+static void New_RequestUrl(char *buf)
 {
     sprintf(buf,"GET https://api.seniverse.com/v3/weather/now.json?key=SJG1TE67YcBqU7D9X&location=%s&language=en&unit=c HTTP/1.0\r\n" \
     "Host: api.seniverse.com\r\n" \
