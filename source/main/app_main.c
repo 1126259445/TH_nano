@@ -47,6 +47,7 @@
 #include "User_DataProcess.h"
 #include "User_Sensor.h"
 #include "Dev_Oled_I2c.h"
+#include "Dev_Ntc.h"
 
 //#ifndef DEVECE_ID
 //#define DEVECE_ID "DEV00003"
@@ -658,6 +659,7 @@ void app_main(void)
 	ESP_LOGI(TAG, "MqttTopicPub: %s", MqttTopicPub);
 	
 	OLED_I2C_Init();
+	Dev_Ntc_ADC_Init();
 	//pwm_init_data();
 	//light_driver_set_rgb(0,0,0);
 	//外设初始化

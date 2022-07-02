@@ -11,6 +11,7 @@
 
 #include "Dev_Dht11.h"
 #include "Dev_Oled_I2c.h"
+#include "Dev_Ntc.h"
 
 #include "User_HttpRequest_Time.h"
 
@@ -38,13 +39,25 @@ void Task_Sensor(void *pvParameters)
             Dht11_Tick = 0;
             printf("read Dht11 \r\n");
             uint8_t ret = Read_Dht11_Data();
+            printf("read NTC \r\n");
+            float Ntc_Temperature = Get_Ntctemp_Data();
 
             char Temperature[10] = {0};
             char Humidity[10] = {0};
             float f_Temperature = Get_Dht11_Temperature()/10.0f;
             float f_Humidity = Get_Dht11_Humidity()/10.0f;
-            sprintf(Temperature,"T:%.1fc",f_Temperature);
-            sprintf(Humidity,"H:%.1f%%",f_Humidity);
+
+            if(f_Humidity != 0)
+            {
+                sprintf(Temperature,"T:%.1fc",f_Temperature); 
+                sprintf(Humidity,"H:%.1f%%",f_Humidity);  
+            }
+            else
+            {
+                sprintf(Temperature,"T:%.1fc",Ntc_Temperature);
+                sprintf(Humidity,"H:---");
+            }
+            
             printf("%s,%s\r\n",Temperature,Humidity);
 /*
             if(f_Temperature > 20) OLED_DrawBMP(0,0,32,4,BMP_Temperature_H);
