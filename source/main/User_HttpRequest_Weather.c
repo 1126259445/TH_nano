@@ -61,39 +61,42 @@ char* Get_Http_Weather_T()
 static void Oled_Show_Wrather()
 {
     /*show BMP and chinese*/
-    if((strstr(Http_Weather.weather,"Sunny")!=NULL) || (strstr(Http_Weather.weather,"Fair")!=NULL))
+    if((strstr(Http_Weather.weather,"Sunny")!=NULL) || (strstr(Http_Weather.weather,"Fair")!=NULL) \
+       || (strstr(Http_Weather.weather,"sunny")!=NULL) || (strstr(Http_Weather.weather,"fair")!=NULL))
     {
         OLED_DrawBMP(0,0,32,4,Sunny);
         OLED_ShowChinese(0,4,chinese[0]);
         OLED_ShowString(16,4,"  ",SIZE16);
     }
-    else if(strstr(Http_Weather.weather,"Clear")!=NULL)
+    else if((strstr(Http_Weather.weather,"Clear")!=NULL) || (strstr(Http_Weather.weather,"clear")!=NULL))
     {
         OLED_DrawBMP(0,0,32,4,Clear);
         OLED_ShowChinese(0,4,chinese[0]);
         OLED_ShowString(16,4,"  ",SIZE16);
     }
-    else if((strstr(Http_Weather.weather,"Cloudy")!=NULL) || (strstr(Http_Weather.weather,"Overcast")!=NULL))
+    else if((strstr(Http_Weather.weather,"Cloudy")!=NULL) || (strstr(Http_Weather.weather,"Overcast")!=NULL) \ 
+        || (strstr(Http_Weather.weather,"cloudy")!=NULL) || (strstr(Http_Weather.weather,"overcast")!=NULL))
     {
         OLED_DrawBMP(0,0,32,4,Cloudy);
         OLED_ShowChinese(0,4,chinese[6]);
         OLED_ShowChinese(16,4,chinese[7]);
     }
-    else if((strstr(Http_Weather.weather,"Rain")!=NULL) || (strstr(Http_Weather.weather,"Storm")!=NULL))
+    else if((strstr(Http_Weather.weather,"Rain")!=NULL) || (strstr(Http_Weather.weather,"Storm")!=NULL) \
+     || (strstr(Http_Weather.weather,"rain")!=NULL) || (strstr(Http_Weather.weather,"storm")!=NULL))
     {
          OLED_DrawBMP(0,0,32,4,Rain);
 
-        if(strstr(Http_Weather.weather,"Light Rain")!=NULL)
+        if(strstr(Http_Weather.weather,"Light")!=NULL)
         {
             OLED_ShowChinese(0,4,chinese[1]);
             OLED_ShowChinese(16,4,chinese[5]);
         }
-        else if(strstr(Http_Weather.weather,"Moderate Rain")!=NULL)
+        else if(strstr(Http_Weather.weather,"Moderate")!=NULL)
         {
             OLED_ShowChinese(0,4,chinese[2]);
             OLED_ShowChinese(16,4,chinese[5]);
         }
-        else if(strstr(Http_Weather.weather,"Heavy Rain")!=NULL)
+        else if(strstr(Http_Weather.weather,"Heavy")!=NULL)
         {
             OLED_ShowChinese(0,4,chinese[3]);
             OLED_ShowChinese(16,4,chinese[5]);
@@ -104,20 +107,20 @@ static void Oled_Show_Wrather()
             OLED_ShowChinese(16,4,chinese[5]);
         }
     }
-    else if(strstr(Http_Weather.weather,"Snow")!=NULL)
+    else if((strstr(Http_Weather.weather,"Snow")!=NULL) || (strstr(Http_Weather.weather,"snow")!=NULL))
     {
         OLED_DrawBMP(0,0,32,4,Snow);
-        if(strstr(Http_Weather.weather,"Light Snow")!=NULL) 
+        if(strstr(Http_Weather.weather,"Light")!=NULL) 
         {
             OLED_ShowChinese(0,4,chinese[1]);
             OLED_ShowChinese(16,4,chinese[10]);
         }
-        else if(strstr(Http_Weather.weather,"Moderate Snow")!=NULL) 
+        else if(strstr(Http_Weather.weather,"Moderate")!=NULL) 
         {
             OLED_ShowChinese(0,4,chinese[2]);
             OLED_ShowChinese(16,4,chinese[10]);
         }
-        else if(strstr(Http_Weather.weather,"Heavy Snow")!=NULL) 
+        else if(strstr(Http_Weather.weather,"Heavy")!=NULL) 
         {
             OLED_ShowChinese(0,4,chinese[3]);
             OLED_ShowChinese(16,4,chinese[10]);
@@ -128,10 +131,10 @@ static void Oled_Show_Wrather()
             OLED_ShowChinese(16,4,chinese[10]);
         }
     }
-    else if(strstr(Http_Weather.weather,"Shower")!=NULL)
+    else if((strstr(Http_Weather.weather,"Shower")!=NULL) || (strstr(Http_Weather.weather,"shower")!=NULL))
     {
         OLED_DrawBMP(0,0,32,4,Shower);
-        if(strstr(Http_Weather.weather,"Thundershower")!=NULL) 
+        if((strstr(Http_Weather.weather,"Thundershower")!=NULL) || (strstr(Http_Weather.weather,"thundershower")!=NULL))
         {
             OLED_ShowChinese(0,4,chinese[8]);
             OLED_ShowChinese(16,4,chinese[5]);
@@ -142,7 +145,8 @@ static void Oled_Show_Wrather()
             OLED_ShowChinese(16,4,chinese[5]);
         }
     }
-    else if((strstr(Http_Weather.weather,"Windy")!=NULL) || (strstr(Http_Weather.weather,"Blustery")!=NULL) || (strstr(Http_Weather.weather,"Hurricane")!=NULL))
+    else if((strstr(Http_Weather.weather,"Windy")!=NULL) || (strstr(Http_Weather.weather,"Blustery")!=NULL) || (strstr(Http_Weather.weather,"Hurricane")!=NULL) \
+        || (strstr(Http_Weather.weather,"windy")!=NULL) || (strstr(Http_Weather.weather,"blustery")!=NULL) || (strstr(Http_Weather.weather,"hurricane")!=NULL))
         {
             OLED_DrawBMP(0,0,32,4,Windy);
             OLED_ShowChinese(0,4,chinese[3]);
