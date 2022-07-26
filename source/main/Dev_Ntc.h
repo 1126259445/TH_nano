@@ -23,7 +23,7 @@ B值是热敏电阻的重要参数
 #define REF_VOLT    1000    //esp8266  = 1000mV
 #define NTC_B       3950    //NTC B
 #define NTC_RP      10000    //NTC 25 10K
-#define SERIES_R    33000   //33K
+#define SERIES_R    2000    //2K    33000   //33K
 #define ADC_ACCURACY  1024
 
 

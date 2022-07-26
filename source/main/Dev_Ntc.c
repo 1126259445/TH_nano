@@ -45,7 +45,8 @@ float Get_Ntctemp_Data(void)
     float Ka=273.15;
 
     vol=(float)((Get_Adc_Average()*REF_VOLT)/ADC_ACCURACY);
-    Rt = (vol * SERIES_R) / (VCC_VOLT-vol);
+    //Rt = (vol * SERIES_R) / (VCC_VOLT-vol); 
+    Rt = ((VCC_VOLT * SERIES_R) / vol) - SERIES_R;
     temp=1/(1/T2+log(Rt/NTC_RP)/NTC_B)-Ka+0.5;
 
     return temp;
