@@ -621,7 +621,7 @@ void  OLED_ShowString(uint8_t x, uint8_t y, char * Show_char,uint8_t fount_size)
 
 // 在指定位置显示chinese
 //-----------------------------------------------------------------------------
-void OLED_ShowChinese(uint8_t x, uint8_t y, char*chinese)
+void OLED_ShowChinese(uint8_t x, uint8_t y, unsigned char*chinese)
 {
 	uint8_t i = 0;
 	OLED_Set_Pos(x,y);// 设置画点起始处
@@ -705,7 +705,7 @@ void  OLED_Clear_XY(uint8_t x0,uint8_t y0,uint8_t x1,uint8_t y1)
 		OLED_WR_Byte(0x10,OLED_CMD);// 列高地址
 
 		uint8_t clear_arr[128] = {0};
-		OLED_Set_Pos(x0,y0);
+		OLED_Set_Pos(x0,N_Page);
 		OLED_Write_Multi_Data(clear_arr,(x1-x0));
 		//for(N_row=0; N_row<128; N_row++)OLED_WR_Byte(0x00,OLED_DATA);
 	}

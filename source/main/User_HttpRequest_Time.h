@@ -32,4 +32,5 @@ uint8_t Get_Http_Int_Minuter(void);
 uint8_t Get_Http_Int_Second(void);
 
 void HTTP_Time_Init(void);
+void Oled_Show_Time(void);
 #endif

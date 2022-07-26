@@ -14,5 +14,5 @@ char* Get_Http_Weather_W(void);
 char* Get_Http_Weather_T(void);
 
 void HTTP_Weather_Init(void);
-
+void Oled_Show_Wrather(void);
 #endif

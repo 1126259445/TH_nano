@@ -58,7 +58,7 @@ char* Get_Http_Weather_T()
 
 
 /**********************************************************/
-static void Oled_Show_Wrather()
+void Oled_Show_Wrather()
 {
     /*show BMP and chinese*/
     if((strstr(Http_Weather.weather,"Sunny")!=NULL) || (strstr(Http_Weather.weather,"Fair")!=NULL) \

@@ -116,7 +116,7 @@ static void calculation(char *str_time)
     printf("Http_int_Time = %d %d %d %d:%d:%d\r\n",Http_int_Time.years,Http_int_Time.month,Http_int_Time.day,Http_int_Time.hours,Http_int_Time.minute,Http_int_Time.second);
 }
 
-static void Oled_Show_Time(void)
+void Oled_Show_Time(void)
 {
     static char calendar[11] = {0};
     static char time[10] = {0}; 

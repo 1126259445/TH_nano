@@ -453,7 +453,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 			xTaskCreate(Task_ParseJSON, "Task_ParseJSON", 1024*4, NULL, 5, &mHandlerParseJSON);
 		}
 */
-		OLED_Clear_XY(0,0,128,6);
+		OLED_Clear();
 		ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP************");
 		HTTP_Time_Init();
 		HTTP_Weather_Init();
@@ -465,7 +465,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		esp_wifi_connect();
 		xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
 		isConnect2Server = false;
-		OLED_Clear_XY(0,0,128,6);
+		OLED_Clear();
 		OLED_ShowString(0,2,"WIFI connecting.",SIZE16);
 		ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED *WIFI connecting");
 		break;
