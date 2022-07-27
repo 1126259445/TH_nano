@@ -14,6 +14,7 @@
 #include "Dev_Ntc.h"
 
 #include "User_HttpRequest_Time.h"
+#include "User_HttpRequest_Weather.h"
 
 TaskHandle_t Sensor_Handle = NULL;
 
@@ -27,14 +28,13 @@ void Task_Sensor(void *pvParameters)
 {
     printf("Task_Sensor------------------------------------------ \r\n");
     static uint32_t Dht11_Tick = 0;
-    static uint32_t Speed_Tick = 0;
-    static uint32_t Xxxx_Tick = 0;
+    static uint32_t Time_Weather_Tick = 0;
 
     Dht11_Init();
 
     while(1)
     {
-        if(++Dht11_Tick > 10)
+        if(++Dht11_Tick > 1)
         {
             Dht11_Tick = 0;
             printf("read Dht11 \r\n");
@@ -49,38 +49,28 @@ void Task_Sensor(void *pvParameters)
 
             if(f_Humidity != 0)
             {
-                sprintf(Temperature,"T:%.1fc",f_Temperature); 
+                sprintf(Temperature,"T:%.1f",f_Temperature); 
                 sprintf(Humidity,"H:%.1f%%",f_Humidity);  
             }
             else
             {
-                sprintf(Temperature,"T:%.1fc",Ntc_Temperature);
+                sprintf(Temperature,"T:%.1f",Ntc_Temperature);
                 sprintf(Humidity,"H:---");
             }
             
             printf("%s,%s\r\n",Temperature,Humidity);
-/*
-            if(f_Temperature > 20) OLED_DrawBMP(0,0,32,4,BMP_Temperature_H);
-            else  OLED_DrawBMP(0,0,32,4,BMP_Temperature_L);
-            if(f_Humidity > 60)  OLED_DrawBMP(0,4,32,8,BMP_Humidity_H);
-            else  OLED_DrawBMP(0,4,32,8,BMP_Humidity_L);
-*/
             OLED_ShowString(0,6,Temperature,SIZE16);
             OLED_ShowString(72,6,Humidity,SIZE16);     
         }
 
-        if(++Speed_Tick > 50)
+        if(++Time_Weather_Tick > 3)
         {
-            Speed_Tick = 0;
-           
+            Time_Weather_Tick = 0;
+            Oled_Show_Wrather();
+            Oled_Show_Time();
         }
 
-        if(++Xxxx_Tick > 100)
-        {
-            Xxxx_Tick = 0;
-        }
-
-         vTaskDelay(100 / portTICK_PERIOD_MS);
+         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
